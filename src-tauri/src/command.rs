@@ -1,20 +1,65 @@
-use tauri::AppHandle;
-use tauri_nspanel::ManagerExt;
+use std::sync::Arc;
 
-use crate::SPOTLIGHT_LABEL;
+use tauri::{AppHandle, Manager};
+use tauri_nspanel::ManagerExt;
+use xcap::{image::DynamicImage, Monitor};
+use crate::window::WebviewWindowExt;
+
+use crate::{OVERLAY_LABEL, CHAT_LABEL};
+
+use thiserror::Error;
+
+type TauriError = tauri::Error;
+
+#[derive(Error, Debug)]
+enum Error {
+    #[error("Unable to convert window to panel")]
+    Panel,
+    #[error("Monitor with cursor not found")]
+    MonitorNotFound,
+}
 
 #[tauri::command]
 pub fn show(app_handle: AppHandle) {
-    let panel = app_handle.get_webview_panel(SPOTLIGHT_LABEL).unwrap();
+    let panel = app_handle.get_webview_panel(OVERLAY_LABEL).unwrap();
 
     panel.show();
 }
 
 #[tauri::command]
-pub fn hide(app_handle: AppHandle) {
-    let panel = app_handle.get_webview_panel(SPOTLIGHT_LABEL).unwrap();
+pub fn hide(app_handle: AppHandle, name: &str) {
+    let panel = app_handle.get_webview_panel(name).unwrap();
 
     if panel.is_visible() {
         panel.order_out(None);
     }
+}
+
+#[tauri::command]
+pub fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, height: u32) -> tauri::Result<Vec<u8>> {
+    hide(app_handle.clone(), OVERLAY_LABEL);
+
+    let chat_window = app_handle.get_webview_window(CHAT_LABEL).unwrap();
+    let chat_panel = app_handle.get_webview_panel(CHAT_LABEL).unwrap();
+
+    chat_window.center_at_cursor_monitor().unwrap();
+    chat_panel.show();
+
+    println!("chat panel shown? {}", chat_panel.is_visible());
+
+    let cursor_monitor = monitor::get_monitor_with_cursor().ok_or(
+      TauriError::Anyhow(Error::MonitorNotFound.into()))?;
+
+    let xcap_monitors = Monitor::all().unwrap();
+
+    let matching_monitor = xcap_monitors.iter()
+      .find(|m| m.id().unwrap() == cursor_monitor.id()).ok_or(
+        TauriError::Anyhow(Error::MonitorNotFound.into())
+    )?;
+
+    let screenshot = matching_monitor.capture_image().unwrap();
+
+    let area = DynamicImage::from(screenshot).crop(x, y, width, height);
+
+    return Ok(area.to_rgba8().into_vec());
 }

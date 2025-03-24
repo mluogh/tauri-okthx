@@ -1,0 +1,9 @@
+.snip-overlay {
+  position: relative;
+  height: 100vh;
+  background: transparent;
+  background-color: transparent;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+}

@@ -10,9 +10,12 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@chakra-ui/react": "2.10.7",
+    "@emotion/react": "^11.14.0",
     "@tauri-apps/api": "2.0.0-rc.4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.4.0"
   },
   "devDependencies": {
     "@tauri-apps/cli": "2.0.0-beta.22",

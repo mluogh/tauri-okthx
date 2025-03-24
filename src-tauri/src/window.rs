@@ -1,9 +1,9 @@
-use tauri::{Emitter, Manager, Runtime, WebviewWindow};
+use tauri::{Emitter, Manager, Runtime, WebviewWindow, PhysicalSize, Size};
 use tauri_nspanel::{
     cocoa::{
         appkit::{NSMainMenuWindowLevel, NSView, NSWindowCollectionBehavior},
         base::{id, YES},
-        foundation::{NSPoint, NSRect},
+        foundation::{NSPoint, NSRect, NSSize},
     },
     objc::{msg_send, sel, sel_impl},
     panel_delegate, Panel, WebviewWindowExt as PanelWebviewWindowExt,
@@ -22,6 +22,8 @@ enum Error {
 
 pub trait WebviewWindowExt {
     fn to_spotlight_panel(&self) -> tauri::Result<Panel>;
+
+    fn fullscreen_at_cursor_monitor(&self) -> tauri::Result<()>;
 
     fn center_at_cursor_monitor(&self) -> tauri::Result<()>;
 }
@@ -80,6 +82,45 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
         panel.set_delegate(panel_delegate);
 
         Ok(panel)
+    }
+
+    fn fullscreen_at_cursor_monitor(&self) -> tauri::Result<()> {
+        let monitor = monitor::get_monitor_with_cursor()
+            .ok_or(TauriError::Anyhow(Error::MonitorNotFound.into()))?;
+
+        let monitor_scale_factor = monitor.scale_factor();
+
+        let monitor_size = monitor.size().to_logical::<f64>(monitor_scale_factor);
+
+        let monitor_position = monitor.position().to_logical::<f64>(monitor_scale_factor);
+
+        let window_handle: id = self.ns_window().unwrap() as _;
+
+        let window_frame: NSRect = unsafe { window_handle.frame() };
+
+        let result = self.set_size(Size::Physical(PhysicalSize::new(
+            monitor_size.width as u32,
+            monitor_size.height as u32,
+        )));
+
+        if let Err(e) = result {
+            println!("Error setting window size: {:?}", e);
+        }
+
+        let rect = NSRect {
+            origin: NSPoint {
+                x: monitor_position.x,
+                y: monitor_position.y,
+            },
+            size: NSSize {
+                width: monitor_size.width,
+                height: monitor_size.height,
+            },
+        };
+
+        let _: () = unsafe { msg_send![window_handle, setFrame: rect display: YES] };
+
+        Ok(())
     }
 
     fn center_at_cursor_monitor(&self) -> tauri::Result<()> {

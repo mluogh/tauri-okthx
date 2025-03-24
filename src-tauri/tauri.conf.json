@@ -1,7 +1,7 @@
 {
   "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
@@ -23,13 +23,26 @@
   "app": {
     "windows": [
       {
+        "label": "overlay",
         "fullscreen": false,
+        "transparent": true,
         "height": 250,
         "width": 800,
         "resizable": false,
         "decorations": false,
         "center": true,
         "visible": false
+      },
+      {
+        "label": "chat",
+        "fullscreen": false,
+        "height": 250,
+        "width": 800,
+        "resizable": false,
+        "decorations": false,
+        "center": true,
+        "visible": false,
+        "url": "index.html/#chat"
       }
     ],
     "security": {
