@@ -31,7 +31,8 @@
         "resizable": false,
         "decorations": false,
         "center": true,
-        "visible": false
+        "visible": false,
+        "acceptFirstMouse": true
       },
       {
         "label": "chat",
@@ -41,8 +42,9 @@
         "width": 800,
         "resizable": false,
         "decorations": false,
-        "center": true,
+        "center": false,
         "visible": false,
+        "acceptFirstMouse": true,
         "url": "index.html/#chat"
       }
     ],

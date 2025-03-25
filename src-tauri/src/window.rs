@@ -40,7 +40,8 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
 
         // Allows the panel to display on the same space as the full screen window
         panel.set_collection_behaviour(
-            NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary,
+            NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
+            // | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
         );
 
         #[allow(non_upper_case_globals)]

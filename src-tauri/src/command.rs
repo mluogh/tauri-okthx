@@ -19,15 +19,7 @@ enum Error {
     MonitorNotFound,
 }
 
-#[tauri::command]
-pub fn show(app_handle: AppHandle) {
-    let panel = app_handle.get_webview_panel(OVERLAY_LABEL).unwrap();
-
-    panel.show();
-}
-
-#[tauri::command]
-pub fn hide(app_handle: AppHandle, name: &str) {
+fn hide_panel(app_handle: AppHandle, name: &str) {
     let panel = app_handle.get_webview_panel(name).unwrap();
 
     if panel.is_visible() {
@@ -36,14 +28,27 @@ pub fn hide(app_handle: AppHandle, name: &str) {
 }
 
 #[tauri::command]
+pub fn show(app_handle: AppHandle) {
+    let panel = app_handle.get_webview_panel(OVERLAY_LABEL).unwrap();
+
+    panel.show();
+}
+
+#[tauri::command]
+pub fn hide_all(app_handle: AppHandle) {
+    hide_panel(app_handle.clone(), OVERLAY_LABEL);
+    hide_panel(app_handle.clone(), CHAT_LABEL);
+}
+
+#[tauri::command]
 pub fn switch_to_chat(app_handle: AppHandle) {
-    hide(app_handle.clone(), OVERLAY_LABEL);
+    hide_panel(app_handle.clone(), OVERLAY_LABEL);
 
     let chat_window = app_handle.get_webview_window(CHAT_LABEL).unwrap();
     let chat_panel = app_handle.get_webview_panel(CHAT_LABEL).unwrap();
 
     chat_window.center_at_cursor_monitor().unwrap();
-    chat_window.show();
+    chat_panel.show();
 }
 
 #[tauri::command]

@@ -6,7 +6,7 @@ const useEscape = () => {
     if (event.key === "Escape") {
       event.preventDefault();
 
-      invoke("hide");
+      invoke("hide_all");
     }
   };
 

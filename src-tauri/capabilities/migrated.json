@@ -1,9 +1,11 @@
 {
-  "identifier": "main",
-  "description": "Capability for the main window",
+  "identifier": "default",
+  "description": "Capability for the chat window",
   "local": true,
-  "windows": [
-    "main"
-  ],
-  "permissions": []
+  "windows": ["chat", "main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:deny-internal-toggle-maximize"
+  ]
 }

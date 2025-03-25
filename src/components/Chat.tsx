@@ -1,6 +1,11 @@
 function Chat() {
   return (
     <div className="container">
+      <div
+        className="chat-header"
+        data-tauri-drag-region
+        style={{ padding: "10px", backgroundColor: "red" }}
+      ></div>
       <h2>Tauri MacOS Spotlight App</h2>
 
       <p style={{ margin: 0 }}>
