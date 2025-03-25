@@ -19,6 +19,7 @@ fn main() {
             command::show,
             command::hide,
             command::screenshot,
+            command::switch_to_chat,
         ])
         .plugin(tauri_nspanel::init())
         .setup(move |app| {
@@ -31,24 +32,18 @@ fn main() {
 
             // Convert the window to a spotlight panel
             let panel = window.to_spotlight_panel()?;
+            
 
             let chat_window = handle.get_webview_window(CHAT_LABEL).unwrap();
 
-            let chat_panel = chat_window.to_spotlight_panel()?;
-            chat_panel.set_floating_panel(true);
+            // let chat_panel = chat_window.to_spotlight_panel()?;
+            // chat_panel.set_floating_panel(true);
 
             handle.listen(format!("{}_panel_did_resign_key", OVERLAY_LABEL), move |_| {
                 // Hide the panel when it's no longer the key window
                 // This ensures the panel doesn't remain visible when it's not actively being used
                 println!("overlay panel resigned key");
                 panel.order_out(None);
-            });
-
-            handle.listen(format!("{}_panel_did_resign_key", CHAT_LABEL), move |_| {
-                // Hide the panel when it's no longer the key window
-                // This ensures the panel doesn't remain visible when it's not actively being used
-                println!("chat panel resigned key");
-                chat_panel.order_out(None);
             });
 
             Ok(())
@@ -65,11 +60,11 @@ fn main() {
                         let overlay_window = app.get_webview_window(OVERLAY_LABEL).unwrap();
                         let overlay_panel = app.get_webview_panel(OVERLAY_LABEL).unwrap();
 
-                        let chat_panel = app.get_webview_panel(CHAT_LABEL).unwrap();
+                        let chat_window = app.get_webview_window(CHAT_LABEL).unwrap();
 
-                        if overlay_panel.is_visible() || chat_panel.is_visible() {
+                        if overlay_panel.is_visible() || chat_window.is_visible().unwrap_or(false) {
                             overlay_panel.order_out(None);
-                            chat_panel.order_out(None);
+                            chat_window.hide();
 
                             println!("both panels hidden");
                         } else {

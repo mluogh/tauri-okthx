@@ -36,17 +36,18 @@ pub fn hide(app_handle: AppHandle, name: &str) {
 }
 
 #[tauri::command]
-pub fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, height: u32) -> tauri::Result<Vec<u8>> {
+pub fn switch_to_chat(app_handle: AppHandle) {
     hide(app_handle.clone(), OVERLAY_LABEL);
 
     let chat_window = app_handle.get_webview_window(CHAT_LABEL).unwrap();
     let chat_panel = app_handle.get_webview_panel(CHAT_LABEL).unwrap();
 
     chat_window.center_at_cursor_monitor().unwrap();
-    chat_panel.show();
+    chat_window.show();
+}
 
-    println!("chat panel shown? {}", chat_panel.is_visible());
-
+#[tauri::command]
+pub fn screenshot(_app_handle: AppHandle, x: u32, y: u32, width: u32, height: u32) -> tauri::Result<Vec<u8>> {
     let cursor_monitor = monitor::get_monitor_with_cursor().ok_or(
       TauriError::Anyhow(Error::MonitorNotFound.into()))?;
 

@@ -55,8 +55,9 @@ function Overlay() {
       height: selectionBox.height,
     };
 
+    invoke("switch_to_chat");
+
     invoke("screenshot", area).then((screenshot) => {
-      console.log("bullshit");
       console.log(screenshot);
     });
 
