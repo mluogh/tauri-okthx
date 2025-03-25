@@ -97,8 +97,6 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
 
         let window_handle: id = self.ns_window().unwrap() as _;
 
-        let window_frame: NSRect = unsafe { window_handle.frame() };
-
         let result = self.set_size(Size::Physical(PhysicalSize::new(
             monitor_size.width as u32,
             monitor_size.height as u32,

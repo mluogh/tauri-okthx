@@ -36,8 +36,7 @@ fn main() {
             let chat_window = handle.get_webview_window(CHAT_LABEL).unwrap();
 
             let chat_panel = chat_window.to_spotlight_panel()?;
-            // chat_panel.set_floating_panel(true);
-            // chat_panel.set_accepts_mouse_moved_events(true);
+            // TODO: figure out how to make this work?
             // chat_panel.set_moveable_by_window_background(true);
 
             handle.listen(format!("{}_panel_did_resign_key", OVERLAY_LABEL), move |_| {
@@ -45,13 +44,6 @@ fn main() {
                 // This ensures the panel doesn't remain visible when it's not actively being used
                 panel.order_out(None);
             });
-
-            // handle.listen(format!("{}_panel_did_resign_key", CHAT_LABEL), move |_| {
-            //     // Hide the panel when it's no longer the key window
-            //     // This ensures the panel doesn't remain visible when it's not actively being used
-            //     println!("overlay panel resigned key");
-            //     panel.order_out(None);
-            // });
 
             Ok(())
         })

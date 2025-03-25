@@ -1,8 +1,8 @@
 {
   "identifier": "default",
-  "description": "Capability for the chat window",
+  "description": "Capability for the chat window. NOTE: if you update tauri v2, need to prefix with core: and stuff",
   "local": true,
-  "windows": ["chat"],
+  "windows": ["chat", "main"],
   "permissions": [
     "app:default",
     "window:allow-start-dragging",
