@@ -1,1 +1,1 @@
-{"main":{"identifier":"main","description":"Capability for the main window","local":true,"windows":["main"],"permissions":[]}}
+{"default":{"identifier":"default","description":"Capability for the chat window","local":true,"windows":["chat"],"permissions":["app:default","window:allow-start-dragging","window:deny-internal-toggle-maximize"]}}
