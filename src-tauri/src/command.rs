@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, Emitter};
 use tauri_nspanel::ManagerExt;
-use xcap::{image::DynamicImage, Monitor};
+use xcap::{image::DynamicImage, Monitor, image::ImageFormat};
 use crate::window::WebviewWindowExt;
 
 use crate::{OVERLAY_LABEL, CHAT_LABEL};
@@ -52,7 +52,7 @@ pub fn switch_to_chat(app_handle: AppHandle) {
 }
 
 #[tauri::command]
-pub fn screenshot(_app_handle: AppHandle, x: u32, y: u32, width: u32, height: u32) -> tauri::Result<Vec<u8>> {
+pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, height: u32) -> Result<(), TauriError> {
     let cursor_monitor = monitor::get_monitor_with_cursor().ok_or(
       TauriError::Anyhow(Error::MonitorNotFound.into()))?;
 
@@ -67,5 +67,11 @@ pub fn screenshot(_app_handle: AppHandle, x: u32, y: u32, width: u32, height: u3
 
     let area = DynamicImage::from(screenshot).crop(x, y, width, height);
 
-    return Ok(area.to_rgba8().into_vec());
+    let mut buf = Vec::new();
+    let mut cursor = std::io::Cursor::new(&mut buf);
+    area.write_to(&mut cursor, ImageFormat::Png).unwrap();
+
+    app_handle.emit("screenshot", buf).unwrap();
+
+    Ok(())
 }

@@ -26,16 +26,14 @@ function App() {
   getCurrentWindow().setCursorIcon("crosshair");
 
   return (
-    <ChakraProvider theme={theme}>
-      <div className="container">
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<SnipOverlay />} />
-            <Route path="/chat" element={<Chat />} />
-          </Routes>
-        </HashRouter>
-      </div>
-    </ChakraProvider>
+    <div className="container">
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<SnipOverlay />} />
+          <Route path="/chat" element={<Chat />} />
+        </Routes>
+      </HashRouter>
+    </div>
   );
 }
 

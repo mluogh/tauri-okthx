@@ -12,19 +12,25 @@
   "dependencies": {
     "@chakra-ui/react": "2.10.7",
     "@emotion/react": "^11.14.0",
+    "@llamaindex/chat-ui": "^0.3.1",
+    "@openrouter/ai-sdk-provider": "^0.4.3",
+    "@tailwindcss/vite": "^4.0.16",
     "@tauri-apps/api": "2.0.0-rc.4",
+    "ai": "^4.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.4.0"
+    "react-router-dom": "^7.4.0",
+    "tailwindcss": "^4.0.16"
   },
   "devDependencies": {
     "@tauri-apps/cli": "2.0.0-beta.22",
-    "@types/node": "^20.16.3",
+    "@types/node": "^20.17.27",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "tw-animate-css": "^1.2.4",
     "typescript": "^5.5.4",
-    "vite": "^4.5.3"
+    "vite": "^6.2.3"
   },
-  "packageManager": "pnpm@9.5.0"
+  "packageManager": "npm@9.5.0"
 }

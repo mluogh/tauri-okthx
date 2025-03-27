@@ -44,11 +44,18 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
             // | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
         );
 
+        // #[allow(non_upper_case_globals)]
+        // const NSWindowStyleMaskNonActivatingPanel: i32 = 1 << 7;
+
+        // // Ensures the panel cannot activate the App
+        // panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel);
+
         #[allow(non_upper_case_globals)]
         const NSWindowStyleMaskNonActivatingPanel: i32 = 1 << 7;
-
-        // Ensures the panel cannot activate the App
-        panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel);
+        #[allow(non_upper_case_globals)]
+        const NSResizableWindowMask: i32 = 1 << 3;
+        
+        panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel + NSResizableWindowMask);
 
         // Set up a delegate to handle key window events for the panel
         //
