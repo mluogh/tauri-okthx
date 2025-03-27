@@ -8,6 +8,9 @@
     "window:allow-set-cursor-icon",
     "window:allow-start-dragging",
     "window:deny-internal-toggle-maximize",
-    "event:allow-listen"
+    "event:allow-listen",
+    "event:allow-unlisten",
+    "window:allow-inner-size",
+    "window:allow-set-size"
   ]
 }

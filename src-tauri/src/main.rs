@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::{Listener, Manager};
+use tauri::{Listener, Manager, Emitter};
 use tauri_nspanel::ManagerExt;
 use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, ShortcutState};
 use window::WebviewWindowExt;
@@ -64,13 +64,14 @@ fn main() {
                         if overlay_panel.is_visible() || chat_panel.is_visible() {
                             overlay_panel.order_out(None);
                             chat_panel.order_out(None);
+                            app.emit("reset", ()).unwrap();
 
                             println!("both panels hidden");
                         } else {
                             overlay_window.fullscreen_at_cursor_monitor().unwrap();
                             println!("overlay panel shown");
-                            overlay_window.set_focus().unwrap();
                             overlay_panel.show();
+                            overlay_window.set_focus().unwrap();
                         }
                     }
                 })

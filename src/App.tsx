@@ -3,7 +3,7 @@ import useEscape from "./hooks/useEscape";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import SnipOverlay from "./components/SnipOverlay";
-import Chat from "./components/Chat";
+import ChatWrapper from "./components/ChatWrapper";
 
 import "./App.css";
 
@@ -30,7 +30,7 @@ function App() {
       <HashRouter>
         <Routes>
           <Route path="/" element={<SnipOverlay />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat" element={<ChatWrapper />} />
         </Routes>
       </HashRouter>
     </div>

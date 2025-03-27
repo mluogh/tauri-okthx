@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 function Overlay() {
   const [isSelecting, setIsSelecting] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [selectionBox, setSelectionBox] = useState({
     x: 0,
     y: 0,
@@ -22,6 +23,9 @@ function Overlay() {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      // Update mouse position for cursor ring
+      setMousePosition({ x: e.clientX, y: e.clientY });
+
       if (!isSelecting) return;
 
       // Update selection box dimensions
@@ -81,6 +85,19 @@ function Overlay() {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
+      {/* Circular ring that follows the mouse */}
+      <Box
+        position="absolute"
+        top={`${mousePosition.y - 15}px`}
+        left={`${mousePosition.x - 15}px`}
+        width="30px"
+        height="30px"
+        borderRadius="50%"
+        border="2px solid black"
+        backgroundColor="white"
+        pointerEvents="none"
+      />
+
       {isSelecting && (
         <Box
           position="absolute"

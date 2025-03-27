@@ -44,18 +44,10 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
             // | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
         );
 
-        // #[allow(non_upper_case_globals)]
-        // const NSWindowStyleMaskNonActivatingPanel: i32 = 1 << 7;
-
-        // // Ensures the panel cannot activate the App
-        // panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel);
-
         #[allow(non_upper_case_globals)]
         const NSWindowStyleMaskNonActivatingPanel: i32 = 1 << 7;
-        #[allow(non_upper_case_globals)]
-        const NSResizableWindowMask: i32 = 1 << 3;
         
-        panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel + NSResizableWindowMask);
+        panel.set_style_mask(NSWindowStyleMaskNonActivatingPanel);
 
         // Set up a delegate to handle key window events for the panel
         //
@@ -141,16 +133,20 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
 
         let window_handle: id = self.ns_window().unwrap() as _;
 
-        let window_frame: NSRect = unsafe { window_handle.frame() };
+        let size = NSSize {
+            width: 500.0,
+            height: 200.0,
+        };
 
+        // Put it near the bottom of monitor but centered horizontally
         let rect = NSRect {
             origin: NSPoint {
                 x: (monitor_position.x + (monitor_size.width / 2.0))
-                    - (window_frame.size.width / 2.0),
-                y: (monitor_position.y + (monitor_size.height / 2.0))
-                    - (window_frame.size.height / 2.0),
+                    - (size.width / 2.0),
+                // Cocoa/MacOS has 0, 0 at bottom left <skull emoji>
+                y: monitor_position.y + 50.0,
             },
-            size: window_frame.size,
+            size,
         };
 
         let _: () = unsafe { msg_send![window_handle, setFrame: rect display: YES] };
