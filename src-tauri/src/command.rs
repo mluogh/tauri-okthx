@@ -75,3 +75,9 @@ pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, heigh
 
     Ok(())
 }
+
+#[tauri::command]
+pub fn set_chat_height(app_handle: AppHandle, height: u32) {
+    let chat_window = app_handle.get_webview_window(CHAT_LABEL).unwrap();
+    chat_window.set_height(height).unwrap();
+}

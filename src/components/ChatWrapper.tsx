@@ -5,6 +5,7 @@ import Chat from "./Chat";
 import "@llamaindex/chat-ui/styles/markdown.css";
 import "./Chat.css";
 import { useState, useRef, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 
 export function ChatWrapper() {
   const noDragSelector = "input, a, button, form, img"; // CSS selector
@@ -26,13 +27,7 @@ export function ChatWrapper() {
         const height = entry.contentRect.height;
         setContainerHeight(height);
 
-        (async () => {
-          const currentSize = await getCurrentWindow().innerSize();
-
-          await getCurrentWindow().setSize(
-            new LogicalSize(currentSize.width, height)
-          );
-        })();
+        invoke("set_chat_height", { height });
       }
     });
 
@@ -44,7 +39,11 @@ export function ChatWrapper() {
   }, []);
 
   return (
-    <div onMouseDown={handleMouseDown} ref={chatContainerRef}>
+    <div
+      className="border-rounded-xl shadow-xl"
+      onMouseDown={handleMouseDown}
+      ref={chatContainerRef}
+    >
       <Chat />
     </div>
   );

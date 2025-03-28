@@ -26,6 +26,8 @@ pub trait WebviewWindowExt {
     fn fullscreen_at_cursor_monitor(&self) -> tauri::Result<()>;
 
     fn center_at_cursor_monitor(&self) -> tauri::Result<()>;
+
+    fn set_height(&self, height: u32) -> tauri::Result<()>;
 }
 
 impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
@@ -41,7 +43,7 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
         // Allows the panel to display on the same space as the full screen window
         panel.set_collection_behaviour(
             NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary
-            // | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
+            | NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
         );
 
         #[allow(non_upper_case_globals)]
@@ -132,20 +134,35 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
         let monitor_position = monitor.position().to_logical::<f64>(monitor_scale_factor);
 
         let window_handle: id = self.ns_window().unwrap() as _;
-
-        let size = NSSize {
-            width: 500.0,
-            height: 200.0,
-        };
+        let frame: NSRect = unsafe { msg_send![window_handle, frame] };
 
         // Put it near the bottom of monitor but centered horizontally
         let rect = NSRect {
             origin: NSPoint {
                 x: (monitor_position.x + (monitor_size.width / 2.0))
-                    - (size.width / 2.0),
+                    - (frame.size.width / 2.0),
                 // Cocoa/MacOS has 0, 0 at bottom left <skull emoji>
                 y: monitor_position.y + 50.0,
             },
+            size: frame.size,
+        };
+
+        let _: () = unsafe { msg_send![window_handle, setFrame: rect display: YES] };
+
+        Ok(())
+    }
+
+    fn set_height(&self, height: u32) -> tauri::Result<()> {
+        let window_handle: id = self.ns_window().unwrap() as _;
+        let frame: NSRect = unsafe { msg_send![window_handle, frame] };
+
+        let size = NSSize {
+            width: 500.0,
+            height: height as f64,
+        };
+
+        let rect = NSRect {
+            origin: frame.origin,
             size,
         };
 

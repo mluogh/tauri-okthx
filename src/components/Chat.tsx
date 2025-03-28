@@ -9,6 +9,7 @@ import {
 } from "@llamaindex/chat-ui";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { IoSend } from "react-icons/io5";
 
 import "@llamaindex/chat-ui/styles/markdown.css";
 import { useEffect, useState } from "react";
@@ -59,8 +60,10 @@ export function Chat() {
           <div>{imageUrl ? <Screenshot imageUrl={imageUrl} /> : null}</div>
           <ChatInput.Form>
             {/* field should expand with input */}
-            <ChatInput.Field className="flex-1" />
-            <ChatInput.Submit />
+            <ChatInput.Field className="flex-1" placeholder="" />
+            <ChatInput.Submit>
+              <IoSend />
+            </ChatInput.Submit>
           </ChatInput.Form>
         </ChatInput>
       </ChatSection>

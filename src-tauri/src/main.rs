@@ -20,6 +20,7 @@ fn main() {
             command::hide_all,
             command::screenshot,
             command::switch_to_chat,
+            command::set_chat_height,
         ])
         .plugin(tauri_nspanel::init())
         .setup(move |app| {
