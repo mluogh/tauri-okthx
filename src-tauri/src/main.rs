@@ -51,11 +51,16 @@ fn main() {
         // Register a global shortcut (⌘+K) to toggle the visibility of the spotlight panel
         .plugin(
             tauri_plugin_global_shortcut::Builder::new()
-                .with_shortcut(Shortcut::new(Some(Modifiers::SUPER), Code::KeyK))
+                .with_shortcut(
+                    Shortcut::new(
+                        Some(Modifiers::SUPER | Modifiers::SHIFT),
+                        Code::KeyF,
+                    ),
+                )
                 .unwrap()
                 .with_handler(|app, shortcut, event| {
                     if event.state == ShortcutState::Pressed
-                        && shortcut.matches(Modifiers::SUPER, Code::KeyK)
+                        && shortcut.matches(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyF)
                     {
                         let overlay_window = app.get_webview_window(OVERLAY_LABEL).unwrap();
                         let overlay_panel = app.get_webview_panel(OVERLAY_LABEL).unwrap();
@@ -70,6 +75,7 @@ fn main() {
                             println!("both panels hidden");
                         } else {
                             overlay_window.fullscreen_at_cursor_monitor().unwrap();
+                            app.emit("start_screenshot", ()).unwrap();
                             println!("overlay panel shown");
                             overlay_panel.show();
                             overlay_window.set_focus().unwrap();

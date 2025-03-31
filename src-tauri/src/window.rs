@@ -98,10 +98,7 @@ impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
 
         let window_handle: id = self.ns_window().unwrap() as _;
 
-        let result = self.set_size(Size::Physical(PhysicalSize::new(
-            monitor_size.width as u32,
-            monitor_size.height as u32,
-        )));
+        let result = self.set_size(monitor_size);
 
         if let Err(e) = result {
             println!("Error setting window size: {:?}", e);

@@ -38,6 +38,8 @@ pub fn show(app_handle: AppHandle) {
 pub fn hide_all(app_handle: AppHandle) {
     hide_panel(app_handle.clone(), OVERLAY_LABEL);
     hide_panel(app_handle.clone(), CHAT_LABEL);
+
+    app_handle.emit("reset", ()).unwrap();
 }
 
 #[tauri::command]
@@ -56,6 +58,10 @@ pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, heigh
     let cursor_monitor = monitor::get_monitor_with_cursor().ok_or(
       TauriError::Anyhow(Error::MonitorNotFound.into()))?;
 
+    if width == 0 || height == 0 {
+      return Ok(());
+    }
+
     let xcap_monitors = Monitor::all().unwrap();
 
     let matching_monitor = xcap_monitors.iter()
@@ -64,8 +70,18 @@ pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, heigh
     )?;
 
     let screenshot = matching_monitor.capture_image().unwrap();
+    let monitor_scale_factor = matching_monitor.scale_factor().unwrap_or(1.0);
 
-    let area = DynamicImage::from(screenshot).crop(x, y, width, height);
+    println!("screenshot: {:?} > {:?}", screenshot.width(), screenshot.height());
+    println!("monitor_scale_factor: {:?}", monitor_scale_factor);
+    println!("x: {:?}, y: {:?}, width: {:?}, height: {:?}", x, y, width, height);
+
+    let scaled_x = (x as f32 * monitor_scale_factor).round() as u32;
+    let scaled_y = (y as f32 * monitor_scale_factor).round() as u32;
+    let scaled_width = (width as f32 * monitor_scale_factor).round() as u32;
+    let scaled_height = (height as f32 * monitor_scale_factor).round() as u32;
+
+    let area = DynamicImage::from(screenshot).crop(scaled_x, scaled_y, scaled_width, scaled_height);
 
     let mut buf = Vec::new();
     let mut cursor = std::io::Cursor::new(&mut buf);

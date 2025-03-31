@@ -8,9 +8,11 @@ import { useState, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 export function ChatWrapper() {
-  const noDragSelector = "input, a, button, form, img"; // CSS selector
+  // const noDragSelector = "input, a, button, form, img"; // CSS selector
+  const noDragSelector =
+    "prose, p, input, a, button, form, img, *::-webkit-scrollbar, *::-webkit-scrollbar-thumb"; // CSS selector for non-draggable elements including scrollbars
+
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [containerHeight, setContainerHeight] = useState<number>(0);
 
   const handleMouseDown = async (e: React.MouseEvent) => {
     if (!e || !e.target || (e.target as HTMLElement).closest(noDragSelector))
@@ -25,7 +27,6 @@ export function ChatWrapper() {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const height = entry.contentRect.height;
-        setContainerHeight(height);
 
         invoke("set_chat_height", { height });
       }

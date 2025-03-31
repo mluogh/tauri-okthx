@@ -1,6 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 function Overlay() {
   const [isSelecting, setIsSelecting] = useState(false);
@@ -12,6 +14,22 @@ function Overlay() {
     height: 0,
   });
   const startPointRef = useRef({ x: 0, y: 0 });
+
+  const reset = () => {
+    setMousePosition({ x: -1000, y: -1000 });
+    setSelectionBox({ x: 0, y: 0, width: 0, height: 0 });
+    setIsSelecting(false);
+  };
+
+  useEffect(() => {
+    const unlisten_start_screenshot = listen("start_screenshot", (event) => {
+      reset();
+    });
+
+    return () => {
+      unlisten_start_screenshot.then((f) => f());
+    };
+  }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     // Start selection
@@ -50,8 +68,6 @@ function Overlay() {
 
   const handleMouseUp = useCallback(() => {
     // End selection
-    setIsSelecting(false);
-
     const area = {
       x: selectionBox.x,
       y: selectionBox.y,
@@ -59,16 +75,13 @@ function Overlay() {
       height: selectionBox.height,
     };
 
+    reset();
+
     invoke("switch_to_chat");
 
     invoke("screenshot", area).then((screenshot) => {
       console.log(screenshot);
     });
-
-    // Reset selection box
-    setSelectionBox({ x: 0, y: 0, width: 0, height: 0 });
-
-    // TODO: maybe use ref for SelectionBox?
   }, [selectionBox]);
 
   return (
@@ -85,7 +98,6 @@ function Overlay() {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* Circular ring that follows the mouse */}
       <Box
         position="absolute"
         top={`${mousePosition.y - 15}px`}
