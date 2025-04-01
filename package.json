@@ -12,7 +12,7 @@
   "dependencies": {
     "@chakra-ui/react": "2.10.7",
     "@emotion/react": "^11.14.0",
-    "@llamaindex/chat-ui": "^0.3.1",
+    "@llamaindex/chat-ui": "^0.3.2",
     "@openrouter/ai-sdk-provider": "^0.4.3",
     "@tailwindcss/vite": "^4.0.16",
     "@tauri-apps/api": "2.0.0-rc.4",

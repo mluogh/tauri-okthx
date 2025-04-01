@@ -37,6 +37,7 @@
       {
         "label": "chat",
         "fullscreen": false,
+        "transparent": true,
         "alwaysOnTop": true,
         "height": 250,
         "width": 800,

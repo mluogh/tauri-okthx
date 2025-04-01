@@ -26,7 +26,7 @@ function App() {
   getCurrentWindow().setCursorIcon("crosshair");
 
   return (
-    <div className="container">
+    <div className="container rounded-xl overflow-hidden">
       <HashRouter>
         <Routes>
           <Route path="/" element={<SnipOverlay />} />

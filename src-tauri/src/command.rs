@@ -1,11 +1,16 @@
 use std::sync::Arc;
 
-use tauri::{AppHandle, Manager, Emitter};
+
+use std::process::Command;
+
+use tauri::async_runtime::spawn;
+
+use tauri::{AppHandle, Manager, Emitter, Runtime, Window};
 use tauri_nspanel::ManagerExt;
 use xcap::{image::DynamicImage, Monitor, image::ImageFormat};
 use crate::window::WebviewWindowExt;
 
-use crate::{OVERLAY_LABEL, CHAT_LABEL};
+use crate::CHAT_LABEL;
 
 use thiserror::Error;
 
@@ -29,22 +34,20 @@ fn hide_panel(app_handle: AppHandle, name: &str) {
 
 #[tauri::command]
 pub fn show(app_handle: AppHandle) {
-    let panel = app_handle.get_webview_panel(OVERLAY_LABEL).unwrap();
+    let panel = app_handle.get_webview_panel(CHAT_LABEL).unwrap();
 
     panel.show();
 }
 
 #[tauri::command]
-pub fn hide_all(app_handle: AppHandle) {
-    hide_panel(app_handle.clone(), OVERLAY_LABEL);
+pub fn hide_chat(app_handle: AppHandle) {
     hide_panel(app_handle.clone(), CHAT_LABEL);
 
-    app_handle.emit("reset", ()).unwrap();
+    app_handle.emit("reset_chat", ()).unwrap();
 }
 
 #[tauri::command]
 pub fn switch_to_chat(app_handle: AppHandle) {
-    hide_panel(app_handle.clone(), OVERLAY_LABEL);
 
     let chat_window = app_handle.get_webview_window(CHAT_LABEL).unwrap();
     let chat_panel = app_handle.get_webview_panel(CHAT_LABEL).unwrap();
@@ -90,6 +93,31 @@ pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, heigh
     app_handle.emit("screenshot", buf).unwrap();
 
     Ok(())
+}
+
+#[tauri::command]
+pub fn capture_screen_interactive(app_handle: AppHandle) -> Result<(), TauriError> {
+  spawn(async move {
+    let temp_file = "/tmp/ok_thx_screenshot.png";
+    let output = Command::new("screencapture")
+      .args(["-i", temp_file])
+      .output();
+    
+    match output { Ok(n) => {}, Err(e) => { return; } }
+
+    let file = std::fs::read(temp_file);
+
+    let buf = match file {
+      Ok(file) => file,
+      Err(e) => return
+    };
+
+    app_handle.emit("screenshot", buf).unwrap();
+
+    std::fs::remove_file(temp_file);
+  });
+  
+  Ok(())
 }
 
 #[tauri::command]

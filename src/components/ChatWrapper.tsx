@@ -41,10 +41,18 @@ export function ChatWrapper() {
 
   return (
     <div
-      className="border-rounded-xl shadow-xl"
+      className="rounded-xl shadow-xl bg-background"
       onMouseDown={handleMouseDown}
       ref={chatContainerRef}
     >
+      <div className="flex justify-start ml-2 mt-2">
+        <button
+          className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded-md mb-2"
+          onClick={() => invoke("hide_chat")}
+        >
+          ok thx
+        </button>
+      </div>
       <Chat />
     </div>
   );
