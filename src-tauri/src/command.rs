@@ -75,10 +75,6 @@ pub async fn screenshot(app_handle: AppHandle, x: u32, y: u32, width: u32, heigh
     let screenshot = matching_monitor.capture_image().unwrap();
     let monitor_scale_factor = matching_monitor.scale_factor().unwrap_or(1.0);
 
-    println!("screenshot: {:?} > {:?}", screenshot.width(), screenshot.height());
-    println!("monitor_scale_factor: {:?}", monitor_scale_factor);
-    println!("x: {:?}, y: {:?}, width: {:?}, height: {:?}", x, y, width, height);
-
     let scaled_x = (x as f32 * monitor_scale_factor).round() as u32;
     let scaled_y = (y as f32 * monitor_scale_factor).round() as u32;
     let scaled_width = (width as f32 * monitor_scale_factor).round() as u32;

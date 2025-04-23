@@ -15,13 +15,13 @@ import { IoSend } from "react-icons/io5";
 import { invoke } from "@tauri-apps/api/core";
 
 import "@llamaindex/chat-ui/styles/markdown.css";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { CreateMessage, useChat } from "@ai-sdk/react";
 import { customFetch } from "../lib/customFetch";
+import CustomChatInputField from "./CustomChatInput";
 
 import "./Chat.css";
 import { Screenshot } from "./Screenshot";
-import { ChatInputField } from "./ChatInput";
 
 interface ScreenshotItem {
   id: string;
@@ -31,12 +31,6 @@ interface ScreenshotItem {
 
 export function Chat() {
   const [screenshots, setScreenshots] = useState<ScreenshotItem[]>([]);
-  const { input, setInput } = useChatUI();
-
-  const appendToInput = (text: string) => {
-    const separator = input.length > 0 ? "\n" : "";
-    setInput(input + separator + text);
-  };
 
   useEffect(() => {
     const unlisten_screenshot = listen("screenshot", (event) => {
@@ -63,20 +57,11 @@ export function Chat() {
       setScreenshots([]);
     });
 
-    const unlisten_clipboard = listen("clipboard_change", (event) => {
-      const text = event.payload as string;
-      // Only handle text content
-      if (typeof text === "string") {
-        appendToInput(text);
-      }
-    });
-
     return () => {
       unlisten_screenshot.then((f) => f());
       unlisten_reset.then((f) => f());
-      unlisten_clipboard.then((f) => f());
     };
-  }, [input, setInput]);
+  }, []);
 
   // Use the custom fetch with useChat
   const handler = useChat({
@@ -87,8 +72,6 @@ export function Chat() {
 
   const originalAppend = handler.append;
   handler.append = (message: Message | CreateMessage) => {
-    console.log("nick");
-    console.log(message);
     if (message.content.replace(/\s+/g, "") === "okthx") {
       invoke("hide_chat");
       return Promise.resolve(null);
@@ -114,18 +97,12 @@ export function Chat() {
     setScreenshots((prev) => prev.filter((screenshot) => screenshot.id !== id));
   };
 
-  const originalHandleSubmit = handler.handleSubmit;
-  handler.handleSubmit = (event) => {
-    console.log("handleSubmit", event);
-    return originalHandleSubmit(event);
-  };
-
   return (
     <div className="rounded-xl shadow-xl bg-background">
       <ChatSection handler={handler} className="gap-4">
         {handler.messages.length > 0 && (
-          <div className="h-100">
-            <ChatMessages className="h-100"></ChatMessages>
+          <div className="h-100 overflow-auto">
+            <ChatMessages className="h-100 text-left"></ChatMessages>
           </div>
         )}
         <ChatInput className="outline outline-1 outline-gray-300">
@@ -142,11 +119,7 @@ export function Chat() {
           )}
           <ChatInput.Form>
             {/* field should expand with input */}
-            <ChatInput.Field
-              className="flex-1"
-              placeholder=""
-              onAppendText={appendToInput}
-            />
+            <CustomChatInputField className="flex-1" placeholder="" />
             <ChatInput.Submit>
               <IoSend />
             </ChatInput.Submit>

@@ -58,14 +58,12 @@ export const customFetch = async (
     method: "POST",
     headers: {
       Authorization:
-        "Bearer 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",
+        "Bearer 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",
       "Content-Type": "application/json",
       "X-Title": "okthx",
     },
     body: JSON.stringify({
-      // model: "deepseek/deepseek-chat-v3-0324:free",
-      model: "google/gemini-2.5-pro-exp-03-25:free",
-      // model: "google/gemini-2.0-flash-exp:free",
+      model: "meta-llama/llama-4-maverick:free",
       messages: processedMessages,
       stream: true,
     }),

@@ -32,6 +32,9 @@ pub trait WebviewWindowExt {
 
 impl<R: Runtime> WebviewWindowExt for WebviewWindow<R> {
     fn to_spotlight_panel(&self) -> tauri::Result<Panel> {
+        let ns_window: id = self.ns_window().unwrap() as _;
+        let _: () = unsafe { msg_send![ns_window, setSharingType: 0] };
+
         // Convert window to panel
         let panel = self
             .to_panel()

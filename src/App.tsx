@@ -22,14 +22,10 @@ const theme = extendTheme({
 });
 
 function App() {
-  useEscape();
-  getCurrentWindow().setCursorIcon("crosshair");
-
   return (
     <div className="container rounded-xl overflow-hidden">
       <HashRouter>
         <Routes>
-          <Route path="/" element={<SnipOverlay />} />
           <Route path="/chat" element={<ChatWrapper />} />
         </Routes>
       </HashRouter>
